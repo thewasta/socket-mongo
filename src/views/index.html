@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documento</title>
+</head>
+<body>
+<form>
+    <input type="text" name="title">
+    <input type="text" name="description">
+    <button id="form" type="submit">Enviar</button>
+</form>
+<div id="mensajes">
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    const socket = io();
+
+    document.getElementById('form').addEventListener('click', async function (e) {
+        e.preventDefault();
+        const title = $('input[name=title]').val();
+        const description = $('input[name=description]').val();
+        const message = {
+            title,
+            description
+        };
+
+        $.post('/add', message);
+        socket.emit('message', message);
+    });
+
+    socket.on('message', function (data) {
+        console.log(data, 'data');
+        $('#mensajes').append(`<p><strong>${data.title}: </strong>${data.description}</p>`);
+    });
+</script>
+</body>
+</html>
